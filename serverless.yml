@@ -1,7 +1,4 @@
-service: serverless-example
-
-plugins:
-  - serverless-offline
+service: my-nestjs-app
 
 provider:
   name: aws
@@ -9,12 +6,31 @@ provider:
   region: eu-west-1
 
 functions:
-  main:
+  app:
     handler: dist/main.handler
     events:
       - http:
-          method: ANY
           path: /
+          method: any
       - http:
-          method: ANY
-          path: '{proxy+}'
+          path: /{proxy+}
+          method: any
+    environment:
+      DB_HOST: ${env:DB_HOST}
+      DB_PORT: 5432
+      DB_USERNAME: ${env:DB_USERNAME}
+      DB_PASSWORD: ${env:DB_PASSWORD}
+      DB_NAME: ${env:DB_NAME}
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-webpack
+
+custom:
+  dotenv:
+    include:
+      - DB_HOST
+      - DB_PORT
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_NAME
